@@ -54,14 +54,20 @@ test <- all[(length(label)+1):nrow(all),]
 dtrain <- xgb.DMatrix(as.matrix(train), label = as.integer(label-1))
 dtest<- xgb.DMatrix(as.matrix(test))
 
-#xgboost model the data
+#xgboost model the data set some initial parameters.
 params = list(objective = 'multi:softmax',
               num_class = 4,
               eta = 0.1)
+# #xgb.cv will give the best nround for this model
+# xgbcv <- xgb.cv( params = params, data = dtrain, nrounds = 1000, nfold = 5, showsd = T, stratified = T, print_every_n = 10, early_stop_round = 20, maximize = F)
+# #print best_iteration 542
+# xgbcv$best_iteration
+
+#train model with results from xgbcv
 xgb <- xgb.train(data = dtrain,
-               params = params,
-               nfold = 10,
-               nround = 20)
+                 params = params,
+                 nfold = 5,
+                 nrounds = 542)
 
 target <- predict(xgb, dtest)
 
